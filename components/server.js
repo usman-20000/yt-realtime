@@ -44,7 +44,7 @@ wss.on("connection", (ws, req) => {
       }
 
       if (data.type === "send_message") {
-        const { senderId, receiverId, senderName, receiverName, message } = data;
+        const { senderId, receiverId, senderName, receiverName, message, image } = data;
 
         const newMessage = {
           senderId,
@@ -52,6 +52,7 @@ wss.on("connection", (ws, req) => {
           senderName,
           receiverName,
           text: message,
+          image,
           unread: true,
         };
 
