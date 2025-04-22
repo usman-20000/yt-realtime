@@ -5,8 +5,10 @@ const server = http.createServer(app);
 const bcrypt = require("bcryptjs");
 const cors = require("cors");
 const WebSocket = require("ws");
+const { v4: uuidv4 } = require('uuid');
 
-const PORT = process.env.PORT || 4000;
+
+const PORT = process.env.PORT || 4001;
 
 app.use(express.json());
 app.use(cors());
@@ -44,20 +46,21 @@ wss.on("connection", (ws, req) => {
       }
 
       if (data.type === "send_message") {
-        const { senderId, receiverId, senderName, receiverName, message, image } = data;
+        const { senderId, receiverId, senderName, receiverName, text, image } = data;
 
         const newMessage = {
+          _id: uuidv4(),
           senderId,
           receiverId,
           senderName,
           receiverName,
-          text: message,
-          image,
+          text: text || "", // Ensure `text` is included, even if it's empty
+          image: image || null,
           unread: true,
         };
 
         const roomId = [senderId, receiverId].sort().join("_");
-        console.log(`Message sent to room ${roomId}: ${message}`);
+        console.log(`Message sent to room ${roomId}: ${text}`);
 
         if (rooms.has(roomId)) {
           rooms.get(roomId).forEach((client) => {
